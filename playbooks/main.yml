@@ -3,27 +3,6 @@
   hosts: swarm
   become: True
   tasks:
-    - name: Make sure the pi user is present
-      user:
-        name: pi
-        generate_ssh_key: yes
-        groups:
-          - pi
-          - adm
-          - dialout
-          - cdrom
-          - sudo
-          - audio
-          - video
-          - plugdev
-          - games
-          - users
-          - input
-          - netdev
-          - docker
-          - gpio
-          - i2c
-          - spi
 
     - name: Set the hosts file via template
       template:
@@ -64,3 +43,25 @@
       package:
         name: docker-engine
         state: present
+
+    - name: Make sure the pi user is present
+      user:
+        name: pi
+        generate_ssh_key: yes
+        groups:
+          - pi
+          - adm
+          - dialout
+          - cdrom
+          - sudo
+          - audio
+          - video
+          - plugdev
+          - games
+          - users
+          - input
+          - netdev
+          - docker
+          - gpio
+          - i2c
+          - spi
