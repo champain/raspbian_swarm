@@ -1,8 +1,8 @@
-all:
-  swarm:
-    children:
-      swarm_master:
-        hosts:
-          swarmaster:
-      swarm_host:
+swarm:
+  children:
+    swarmaster:
+      hosts:
+        swarmaster:
+    swarmost:
+      hosts:
         swarmost[2:6]:
