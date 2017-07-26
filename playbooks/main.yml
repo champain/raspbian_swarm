@@ -35,10 +35,8 @@
 
     - name: remove old versions of Docker
       package:
-        name: {{ item }}
+        name: docker.io
         state: absent
-      with_items:
-        - docker.io
 
     - name: Install prerequisites
       package:
