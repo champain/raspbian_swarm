@@ -1,0 +1,9 @@
+---
+- name: Main docker playbook
+  hosts: swarm_master:swarm_host
+  become: True
+  tasks:
+    - name: Make sure the pi user is present
+      user:
+        name: pi
+        generate_ssh_key: yes
