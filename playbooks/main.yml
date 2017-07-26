@@ -7,3 +7,10 @@
       user:
         name: pi
         generate_ssh_key: yes
+
+    - template:
+        src: ../templates/hosts.j2
+        dest: /etc/hosts
+        owner: root
+        group: root
+        mode: 0644
