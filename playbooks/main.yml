@@ -37,7 +37,7 @@
 
     - name: Add the Docker repo
       apt_repository:
-        repo: deb [arch=armhf] https://download.docker.com/linux/debian raspbian-jessie stable
+        repo: deb [arch=armhf] https://apt.dockerproject.org/repo raspbian-jessie main
         state: present
         filename: docker
 
