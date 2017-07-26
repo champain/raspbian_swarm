@@ -2,7 +2,6 @@
 - name: Main docker playbook
   hosts: swarm
   become: True
-  serial: 2
   tasks:
 
     - name: Set the hosts file via template
@@ -37,7 +36,7 @@
 
     - name: Add the Docker repo
       apt_repository:
-        repo: deb [arch=armhf] https://apt.dockerproject.org/repo raspbian-jessie main
+        repo: deb [arch=armhf] https://download.docker.com/linux/debian      jessie stable
         state: present
         filename: docker
 
