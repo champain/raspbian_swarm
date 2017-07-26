@@ -42,7 +42,7 @@
 
     - name: Install the Docker package
       apt:
-        name: docker-engine
+        name: docker-ce
         state: present
         update_cache: yes
 
