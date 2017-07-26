@@ -18,3 +18,6 @@ sudo systemctl stop dhcpcd.service
 sudo systemctl disable dhcpcd.service
 sudo /etc/init.d/networking restart
 hostnamectl set-hostname mymachine
+
+## Missing packages, to be updated
+sudo apt-get install build-essential libssl-dev libffi-dev python-dev python-setuptools python-cffi ssh-pass
