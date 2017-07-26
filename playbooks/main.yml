@@ -7,10 +7,62 @@
       user:
         name: pi
         generate_ssh_key: yes
+        groups:
+          - pi
+          - adm
+          - dialout
+          - cdrom
+          - sudo
+          - audio
+          - video
+          - plugdev
+          - games
+          - users
+          - input
+          - netdev
+          - docker
+          - gpio
+          - i2c
+          - spi
 
-    - template:
+    - name: Set the hosts file via template
+      template:
         src: ../templates/hosts.j2
         dest: /etc/hosts
         owner: root
         group: root
         mode: 0644
+
+    - name: remove old versions of Docker
+      package:
+        name: {{ item }}
+        state: absent
+      with_items:
+        - docker.io
+
+    - name: Install prerequisites
+      package:
+        name: {{ item }}
+        state: present
+      with_items:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - gnupg2
+        - software-properties-common
+
+    - name: Add the docker GPG key to apt
+      apt_key:
+        url: "https://download.docker.com/linux/debian/gpg"
+        state: present
+
+    - name: Add the Docker repo
+      apt_repository:
+        repo: deb [arch=armhf] https://download.docker.com/linux/debian raspbian-jessie stable
+        state: present
+        filename: docker.list
+
+    - name: Install the Docker package
+      package:
+        name: docker-engine
+        state: present
