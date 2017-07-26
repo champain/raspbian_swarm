@@ -18,9 +18,10 @@
         state: absent
 
     - name: Install prerequisites
-      package:
+      apt:
         name: "{{ item }}"
         state: present
+        update_cache: yes
       with_items:
         - apt-transport-https
         - ca-certificates
@@ -40,9 +41,10 @@
         filename: docker.list
 
     - name: Install the Docker package
-      package:
+      apt:
         name: docker-engine
         state: present
+        update_cache: yes
 
     - name: Make sure the pi user is present
       user:
