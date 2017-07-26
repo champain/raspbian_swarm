@@ -3,6 +3,7 @@ swarm:
     swarmaster:
       hosts:
         swarmaster:
+          ansible_connection: local
     swarmost:
       hosts:
         swarmost[2:6]:
