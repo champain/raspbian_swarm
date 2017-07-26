@@ -6,7 +6,7 @@ ff02::2         ip6-allrouters
 127.0.1.1       {{ ansible_nodename }}
 {% for i in range(2, 7): %}
   {% if i not in ansible_nodename %}
-192.168.0.20{{ i }}    swarmost{{ i }}
+192.168.0.20{{ i|string }}    swarmost{{ i|string }}
   {% endif %}
 {% endfor %}
 {% if ansible_nodename != "swarmaster" %}

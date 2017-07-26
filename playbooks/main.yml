@@ -1,6 +1,6 @@
 ---
 - name: Main docker playbook
-  hosts: swarm_master:swarm_host
+  hosts: swarm
   become: True
   tasks:
     - name: Make sure the pi user is present
