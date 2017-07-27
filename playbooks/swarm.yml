@@ -1,0 +1,23 @@
+---
+- name: Start the swarm manager
+  hosts: swarmaster
+  become: False
+  tasks:
+    - name: Initialize the swarm
+      command: "docker swarm init --advertise-addr {{ ansible_eth0.ipv4.address }}"
+    
+    - name: Get the docker swarm token
+      command: docker swarm join-token -q worker
+      register: swarm_worker_token
+
+    - name: Set the worker token fact
+      set_fact:
+        swarm_worker_token: swarm_worker_token.stdout
+        swarm_master_ip: "{{ ansible_eth0.ipv4.address }}"
+
+- name: Start swarm nodes
+  hosts: swarmost
+  become: False
+  tasks:
+    - name: Join hosts to the swarm
+      command: "docker swarm join --token {{ swarm_worker_token }} {{ swarm_master_ip }}:2377"
