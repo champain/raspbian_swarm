@@ -1,6 +1,6 @@
 swarm:
   children:
-    swarmaster:
+    swarm_master:
       hosts:
         swarmaster:
           ansible_connection: local
