@@ -1,23 +1,60 @@
 ---
 - name: Start the swarm manager
-  hosts: swarmaster
+  hosts: swarm_master
   become: False
   tasks:
+    - name: Check to see if the swarm is initialized
+      shell: docker info | grep -e '^Swarm' | cut -d ' ' -f 2 
+      register: swarm_active
+      changed_when: False
+
     - name: Initialize the swarm
       command: "docker swarm init --advertise-addr {{ ansible_eth0.ipv4.address }}"
+      when: "active" not in swarm_active.stdout
     
     - name: Get the docker swarm token
       command: docker swarm join-token -q worker
       register: swarm_worker_token
+      changed_when: False
 
     - name: Set the worker token fact
       set_fact:
-        swarm_worker_token: swarm_worker_token.stdout
+        swarm_worker_token: "{{ swarm_worker_token.stdout }}"
         swarm_master_ip: "{{ ansible_eth0.ipv4.address }}"
 
 - name: Start swarm nodes
   hosts: swarmost
   become: False
   tasks:
+    - name: Check to see if the swarm is active
+      shell: docker info | grep -e '^Swarm' | cut -d ' ' -f 2
+      register: swarm_active
+      changed_when: False
+
     - name: Join hosts to the swarm
-      command: "docker swarm join --token {{ swarm_worker_token }} {{ swarm_master_ip }}:2377"
+      command: >
+        docker swarm join \
+        --token {{ hostvars['swarmaster']['swarm_worker_token'] }} \
+        {{ hostvars['swarmaster']['swarm_master_ip'] }}:2377
+      when: "active" not in swarm_active.stdout
+
+
+- name: Fire up the mols service
+  hosts: swarm_master
+  become: False
+  tasks:
+    - name: Check to see if the latin_squares service is running
+      command: docker service inspect latin_squares
+      register: latin_squares_status
+      changed_when: False
+
+    - name: Start the latin_squares service if not running
+      command: >
+        docker service create \
+        --no-resolve-image \
+        --limit-cpu 2 \
+        --limit-memory 800m \
+        --constraint node.role==worker \
+        --mode global
+        --name latin_squares {{ latin_squares_image | default('champain/latin_squares:10.100') }} 
+      when: latin_squares_status.rc > 0
