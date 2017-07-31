@@ -57,5 +57,5 @@
         --constraint node.role==worker \
         --mode global \
         --name latin_squares {{ latin_squares_image | default('champain/latin_squares') }} \
-        10 100 https://hooks.slack.com/services/{{ mols_slack_token}}
+        10 100 https://hooks.slack.com/services/{{ mols_slack_token }}
       when: latin_squares_status.rc > 0
