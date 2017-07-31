@@ -10,7 +10,7 @@
 
     - name: Initialize the swarm
       command: "docker swarm init --advertise-addr {{ ansible_eth0.ipv4.address }}"
-      when: "active" not in swarm_active.stdout
+      when: '"active" not in swarm_active.stdout'
     
     - name: Get the docker swarm token
       command: docker swarm join-token -q worker
