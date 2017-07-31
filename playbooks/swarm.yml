@@ -36,7 +36,7 @@
         docker swarm join \
         --token {{ hostvars['swarmaster']['swarm_worker_token'] }} \
         {{ hostvars['swarmaster']['swarm_master_ip'] }}:2377
-      when: "active" not in swarm_active.stdout
+      when: '"active" not in swarm_active.stdout'
 
 
 - name: Fire up the mols service
