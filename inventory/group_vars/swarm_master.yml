@@ -1,2 +1,3 @@
 ---
 connection: local
+mols_slack_token: securevarhere
