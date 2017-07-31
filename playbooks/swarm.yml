@@ -46,6 +46,7 @@
     - name: Check to see if the latin_squares service is running
       command: docker service inspect latin_squares
       register: latin_squares_status
+      ignore_errors: True
       changed_when: False
 
     - name: Start the latin_squares service if not running
