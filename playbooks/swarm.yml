@@ -10,7 +10,7 @@
 
     - name: Initialize the swarm
       command: "docker swarm init --advertise-addr {{ ansible_eth0.ipv4.address }}"
-      when: '"active" not in swarm_active.stdout'
+      when: '"inactive" in swarm_active.stdout'
     
     - name: Get the docker swarm token
       command: docker swarm join-token -q worker
@@ -36,8 +36,7 @@
         docker swarm join \
         --token {{ hostvars['swarmaster']['swarm_worker_token'] }} \
         {{ hostvars['swarmaster']['swarm_master_ip'] }}:2377
-      when: '"active" not in swarm_active.stdout'
-
+      when: '"inactive" in swarm_active.stdout'
 
 - name: Fire up the mols service
   hosts: swarm_master
