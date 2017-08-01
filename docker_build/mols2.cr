@@ -1,4 +1,5 @@
 require "json"
+require "http/client"
 alias Line = Array(Int32)
 alias LatinSquare = Array(Line)
 
@@ -22,8 +23,9 @@ def notify_slack(webhook_url, channel, username, text, icon_emoji)
     :text => text,
     :icon_emoji => icon_emoji
   }.to_json
-  cmd = "curl -s -X POST --data-urlencode 'payload=#{payload}' #{webhook_url}"
-  system(cmd)
+  HTTP::Client.post(webhook_url, headers: HTTP::Headers{"User-agent" => "MolsApp", "Content-Type" => "application/json"}, body: payload) do |response|
+    puts response.body_io.gets
+  end
 end
 
 def slack_send_square(s, o, slack_url)
@@ -206,10 +208,11 @@ puts "Order: #{order}"
 solve(order) do |square|
   print "."
   total += 1
+  puts "Tried #{total} times"
   orthogonals_for(square) do |transversal|
     orthogonal = reconstitute(transversal)
     pretty_print square, orthogonal
-		slack_send_square square, orthogonal, slack_webhook_url
+    slack_send_square square, orthogonal, slack_webhook_url
   end
   exit if total == finish
   
