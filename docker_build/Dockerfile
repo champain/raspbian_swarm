@@ -15,4 +15,4 @@ ADD mols2.cr /mols_app/mols2.cr
 WORKDIR /mols_app
 RUN crystal build mols2.cr
 ENTRYPOINT ["/mols_app/mols2"]
-CMD ["10","100","<your slack url here>"]
+CMD ["10","<your slack url here>"]

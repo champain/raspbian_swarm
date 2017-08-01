@@ -28,7 +28,6 @@ def notify_slack(webhook_url, channel, username, text, icon_emoji)
   end
 end
 
-# Once the square is sent, exit
 def slack_send_square(s, o, slack_url)
   square_string = String.new
   letters = ('A'..'Z').to_a
@@ -45,8 +44,8 @@ def slack_send_square(s, o, slack_url)
     square_string,
     ":black_square_button:",
   )
-  exit
   nil
+  exit
 end
 
 # converts an orthogonal diagram to a square
@@ -191,6 +190,7 @@ end
 def orthogonals_for(square : LatinSquare, &block : LatinSquare -> _)
   groups = transversal_groups_for(square)
   scratch = LatinSquare.new
+  
   orthogonal_search(groups, scratch, square[0].size, &block)
 end
 
@@ -201,20 +201,27 @@ def solve(n, &block : LatinSquare -> _)
 end
 
 order = ARGV[0].to_i
-# Always try 100 times
-# we are going to exit after we
-# get the first square
 finish = 100
-slack_webhook_url = ARGV[2].to_s
+slack_webhook_url = ARGV[1].to_s
 
 total = 0
 puts "Order: #{order}"
 solve(order) do |square|
+  print "."
   total += 1
   orthogonals_for(square) do |transversal|
     orthogonal = reconstitute(transversal)
     pretty_print square, orthogonal
     slack_send_square square, orthogonal, slack_webhook_url
   end
-  exit if total == finish
+  if total == finish
+    notify_slack(
+      slack_webhook_url,
+      "#latin_squares",
+      "squaresbot",
+      "I tried 100 times, and I coulldn't find one latin square with an order of #{order} for you :(",
+      ":black_square_button:",
+    )
+    exit
+  end
 end
