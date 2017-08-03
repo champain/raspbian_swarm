@@ -1,0 +1,2 @@
+---
+rswarm_pi_pass: "{{ secure_rswarm_pi_pass }}"
