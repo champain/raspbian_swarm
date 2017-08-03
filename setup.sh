@@ -32,7 +32,6 @@ manage_keys() {
   if [ -f ~/.ssh/swarm_key ] && [ -f ~/.ssh/swarm_key.pub ]; then
     echo "Keys already present. Skipping."
     echo "Don't forget to add the key to ssh-agent!!"
-    return 0
   else
     echo "No keys found, creating.."
     ssh-keygen -t rsa -b 4096 -C "RaspberryPi Swarm SSH Key" -N "" -f ~/.ssh/swarm_key -q
@@ -60,7 +59,7 @@ manage_keys() {
 
 DEP_PKGS="build-essential libssl-dev libffi-dev python-dev python-setuptools python-cffi sshpass"
 check_depends() {
-  dpkg -l $DEP_PKGS
+  dpkg -l $DEP_PKGS > /dev/null
   if [ $? -ne 0 ]; then
     echo "At least some dependencies not found"
     echo "Installing $DEP_PKGS"
