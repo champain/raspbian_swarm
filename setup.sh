@@ -64,7 +64,7 @@ manage_keys() {
   fi
 }
 
-DEP_PKGS="build-essential libssl-dev libffi-dev python-dev python-setuptools python-cffi ssh-pass"
+DEP_PKGS="build-essential libssl-dev libffi-dev python-dev python-setuptools python-cffi sshpass"
 check_depends() {
   dpkg -l $DEP_PKGS
   if [ $? -ne 0 ]; then
