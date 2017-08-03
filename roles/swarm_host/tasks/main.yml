@@ -10,3 +10,15 @@
     --token {{ hostvars['swarmaster']['swarm_worker_token'] }} \
     {{ hostvars['swarmaster']['ansible_eth0']['ipv4']['address'] }}:2377
   when: '"inactive" in swarm_active.stdout'
+
+- name: Set authorized key took from file
+  authorized_key:
+    user: pi
+    state: present
+    key: "{{ lookup('file', '/home/pi/.ssh/swarm_rsa.pub') }}"
+
+- name: Disable SSH password authentication
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#PasswordAuthentication yes'
+    line: 'PasswordAuthentication no'
