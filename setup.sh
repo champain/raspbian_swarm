@@ -64,6 +64,30 @@ manage_keys() {
   fi
 }
 
+DEP_PKGS="build-essential libssl-dev libffi-dev python-dev python-setuptools python-cffi ssh-pass"
+check_depends() {
+  dpkg -l $DEP_PKGS
+  if [ $? -ne 0 ]; then
+    echo "At least some dependencies not found"
+    echo "Installing $DEP_PKGS"
+    sudo apt-get update && sudo apt-get install -y $DEP_PKGS
+    if [ $? -ne 0 ]; then
+      echo "Something went wrong installing. Bailing out"
+      exit 1
+    else
+      echo "apt dependencies installed successfully."
+    fi
+  else
+    echo "All apt dependencies present"
+  fi
+}
+  
+check_depends
+if [ $? -ne 0 ]; then
+  echo "Something went wrong installing dependencies"
+  exit 1
+fi
+
 pip_cmd_list=('pip')
 for cmd in "${pip_cmd_list[@]}"; do
   cmd_exists "${cmd[@]}"
