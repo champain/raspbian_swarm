@@ -17,3 +17,20 @@
   set_fact:
     swarm_worker_token: "{{ swarm_worker_token.stdout }}"
     swarm_master_ip: "{{ ansible_eth0.ipv4.address }}"
+
+- name: Check to see if the docker viz is running
+  command: docker service ps viz
+  register: rswarm_viz_service
+  changed_when: False
+
+- name: Deploy Docker viz
+  command: >
+          docker service create \
+                  --no-resolve-image \
+                  --detach=False \
+                  --name viz \
+                  --publish 8080:8080/tcp \
+                  --constraint node.role==manager \
+                  --mount type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock \
+                  alexellis2/visualizer-arm:latest
+  when: rswarm_viz_service.rc == 0

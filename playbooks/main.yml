@@ -3,6 +3,11 @@
   hosts: swarm_master
   become: True
   tasks:
+    - name: Apt update to install avahi-utils
+      apt:
+        name: avahi-utils
+        update_cache: yes
+
     - name: Go discover all of the raspberry pis
       shell: >
         avahi-browse -a -t | awk '/IPv4 raspberrypi-/ { print $4 }'
@@ -13,7 +18,7 @@
       add_host:
         name: "{{ item }}.local"
         groups: swarm_hosts
-      with_items: "{{ avahi_discovered_pis.stdout }}"
+      with_items: "{{ avahi_discovered_pis.stdout_lines }}"
 
 - name: Include the common role
   hosts: swarm
