@@ -29,12 +29,12 @@ cmd_exists() {
 
 manage_keys() {
   echo "Checking for private key"
-  if [ -f ~/.ssh/swarm_key ] && [ -f ~/.ssh/swarm_key.pub ]; then
+  if [ -f ~/.ssh/swarm_rsa ] && [ -f ~/.ssh/swarm_rsa.pub ]; then
     echo "Keys already present. Skipping."
     echo "Don't forget to add the key to ssh-agent!!"
   else
     echo "No keys found, creating.."
-    ssh-keygen -t rsa -b 4096 -C "RaspberryPi Swarm SSH Key" -N "" -f ~/.ssh/swarm_key -q
+    ssh-keygen -t rsa -b 4096 -C "RaspberryPi Swarm SSH Key" -N "" -f ~/.ssh/swarm_rsa -q
     if [ $? -ne 0 ]; then
       echo "Something went wrong while trying to create keys"
       echo "Bailing out"
@@ -50,10 +50,10 @@ manage_keys() {
   fi
   ssh-add -l | grep Swarm > /dev/null
   if [ $? -ne 0 ]; then
-    echo "swarm_key not found in agent. Adding"
-    ssh-add ~/.ssh/swarm_key
+    echo "swarm_rsa not found in agent. Adding"
+    ssh-add ~/.ssh/swarm_rsa
   else
-    echo "swarm_key appears to already be present. Skipping add"
+    echo "swarm_rsa appears to already be present. Skipping add"
   fi
 }
 
