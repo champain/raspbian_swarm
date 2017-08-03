@@ -1,0 +1,12 @@
+---
+- name: Check to see if the swarm is active
+  shell: docker info | grep -e '^Swarm' | cut -d ' ' -f 2
+  register: swarm_active
+  changed_when: False
+
+- name: Join hosts to the swarm
+  command: >
+    docker swarm join \
+    --token {{ hostvars['swarmaster']['swarm_worker_token'] }} \
+    {{ hostvars['swarmaster']['ansible_eth0']['ipv4']['address'] }}:2377
+  when: '"inactive" in swarm_active.stdout'

@@ -1,0 +1,62 @@
+---
+- name: Set the hosts file via template
+  template:
+    src: templates/hosts.j2
+    dest: /etc/hsots
+    owner: root
+    group: root
+    mode: 0644
+- name: remove old versions of Docker
+  package:
+    name: docker.io
+    state: absent
+
+- name: Install prerequisites
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - gnupg2
+    - software-properties-common
+
+- name: Add the docker GPG key to apt
+  apt_key:
+    url: "https://download.docker.com/linux/debian/gpg"
+    state: present
+
+- name: Add the Docker repo
+  apt_repository:
+    repo: deb [arch=armhf] https://download.docker.com/linux/debian      jessie stable
+    state: present
+    filename: docker
+
+- name: Install the Docker package
+  apt:
+    name: docker-ce
+    state: present
+    update_cache: yes
+
+- name: Make sure the pi user is present
+  user:
+    name: pi
+    groups:
+      - pi
+      - adm
+      - dialout
+      - cdrom
+      - sudo
+      - audio
+      - video
+      - plugdev
+      - games
+      - users
+      - input
+      - netdev
+      - docker
+      - gpio
+      - i2c
+      - spi

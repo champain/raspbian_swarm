@@ -1,0 +1,19 @@
+---
+- name: Check to see if the swarm is initialized
+  shell: docker info | grep -e '^Swarm' | cut -d ' ' -f 2
+  register: swarm_active
+  changed_when: False
+
+- name: Initialize the swarm
+  command: "docker swarm init --advertise-addr {{ ansible_eth0.ipv4.address }}"
+  when: '"inactive" in swarm_active.stdout'
+
+- name: Get the docker swarm token
+  command: docker swarm join-token -q worker
+  register: swarm_worker_token
+  changed_when: False
+
+- name: Set the worker token fact
+  set_fact:
+    swarm_worker_token: "{{ swarm_worker_token.stdout }}"
+    swarm_master_ip: "{{ ansible_eth0.ipv4.address }}"
