@@ -11,7 +11,7 @@
     {{ hostvars['swarmaster']['ansible_eth0']['ipv4']['address'] }}:2377
   when: '"inactive" in swarm_active.stdout'
 
-- name: Set authorized key took from file
+- name: Set authorized key from file
   authorized_key:
     user: pi
     state: present
