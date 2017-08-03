@@ -1,69 +1,34 @@
 ---
-- name: Main docker playbook
-  hosts: swarm
+- name: Go discover all of the hosts
+  hosts: swarm_master
   become: True
   tasks:
+    - name: Go discover all of the raspberry pis
+      shell: >
+        avahi-browse -a -t | awk '/IPv4 raspberrypi-/ { print $4 }'
+      register: avahi_discovered_pis
+      changed_when: False
 
-    - name: Set the hosts file via template
-      template:
-        src: ../templates/hosts.j2
-        dest: /etc/hosts
-        owner: root
-        group: root
-        mode: 0644
+    - name: For each of the pis discovered, add it to the swarm_host group
+      add_host:
+        name: "{{ item }}.local"
+        groups: swarm_hosts
+      with_items: "{{ avahi_discovered_pis.stdout }}"
 
-    - name: remove old versions of Docker
-      package:
-        name: docker.io
-        state: absent
+- name: Include the common role
+  hosts: swarm
+  become: True
+  roles:
+    - common
 
-    - name: Install prerequisites
-      apt:
-        name: "{{ item }}"
-        state: present
-        update_cache: yes
-      with_items:
-        - apt-transport-https
-        - ca-certificates
-        - curl
-        - gnupg2
-        - software-properties-common
+- name: Inclue the master role
+  hosts: swarm_master
+  become: True
+  roles:
+     - swarm_master
 
-    - name: Add the docker GPG key to apt
-      apt_key:
-        url: "https://download.docker.com/linux/debian/gpg"
-        state: present
-
-    - name: Add the Docker repo
-      apt_repository:
-        repo: deb [arch=armhf] https://download.docker.com/linux/debian      jessie stable
-        state: present
-        filename: docker
-
-    - name: Install the Docker package
-      apt:
-        name: docker-ce
-        state: present
-        update_cache: yes
-
-    - name: Make sure the pi user is present
-      user:
-        name: pi
-        generate_ssh_key: yes
-        groups:
-          - pi
-          - adm
-          - dialout
-          - cdrom
-          - sudo
-          - audio
-          - video
-          - plugdev
-          - games
-          - users
-          - input
-          - netdev
-          - docker
-          - gpio
-          - i2c
-          - spi
+- name: Include the host role
+  hosts: swarm_hosts
+  become: True
+  roles:
+    - swarm_host
