@@ -2,10 +2,11 @@
 - name: Set the hosts file via template
   template:
     src: templates/hosts.j2
-    dest: /etc/hsots
+    dest: /etc/hosts
     owner: root
     group: root
     mode: 0644
+
 - name: remove old versions of Docker
   package:
     name: docker.io
