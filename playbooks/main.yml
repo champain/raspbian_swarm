@@ -21,13 +21,6 @@
       with_items: "{{ avahi_discovered_pis.stdout_lines }}"
       changed_when: False
 
-    - name: Generate a new ssh key for the pi user
-      user:
-        name: pi
-        generate_ssh_key: yes
-        ssh_key_bits: 4096
-        ssh_key_file: /home/pi/.ssh/swarm_rsa 
-
 - name: Include the common role
   hosts: swarm
   become: True
