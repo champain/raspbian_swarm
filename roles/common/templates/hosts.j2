@@ -3,9 +3,9 @@
 ff02::1         ip6-allnodes
 ff02::2         ip6-allrouters
 
-127.0.1.1       {{ inventory_nodename }}
+127.0.1.1       {{ inventory_hostname }}
 {% for i in groups['swarm']: %}
-{% if i != inventory_nodename  %}
+{% if i != inventory_hostname  %}
 {{ hostvars[i]['ansible_eth0']['ipv4']['address']}} {{ i }}
 {% endif %}
 {% endfor %}
