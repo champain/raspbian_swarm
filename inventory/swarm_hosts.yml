@@ -2,8 +2,6 @@ swarm:
   children:
     swarm_master:
       hosts:
-        swarmaster:
+        127.0.0.1:
           ansible_connection: local
-    swarmost:
-      hosts:
-        swarmost[2:6]:
+    swarm_hosts:
