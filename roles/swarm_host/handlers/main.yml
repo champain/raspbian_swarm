@@ -1,0 +1,5 @@
+---
+- name: ssh service
+  service:
+    name: ssh
+    state: restarted
