@@ -28,20 +28,14 @@ cmd_exists() {
 }
 
 manage_keys() {
-  if [ -d .keys ]; then
-    echo "Already found a .keys dir"
-  else
-    echo "Making a .keys dir for keys"
-    mkdir .keys
-  fi
   echo "Checking for private key"
-  if [ -f .keys/swarm_key ] && [ -f .keys/swarm_key.pub ]; then
+  if [ -f ~/.ssh/swarm_key ] && [ -f ~/.ssh/swarm_key.pub ]; then
     echo "Keys already present. Skipping."
     echo "Don't forget to add the key to ssh-agent!!"
     return 0
   else
     echo "No keys found, creating.."
-    ssh-keygen -t rsa -b 4096 -C "RaspberryPi Swarm SSH Key" -N "" -f .keys/swarm_key -q
+    ssh-keygen -t rsa -b 4096 -C "RaspberryPi Swarm SSH Key" -N "" -f ~/.ssh/swarm_key -q
     if [ $? -ne 0 ]; then
       echo "Something went wrong while trying to create keys"
       echo "Bailing out"
@@ -55,10 +49,10 @@ manage_keys() {
   else
     echo "ssh-agent appears to be running"
   fi
-  ssh-add -l | grep .keys/swarm_key > /dev/null
+  ssh-add -l | grep Swarm > /dev/null
   if [ $? -ne 0 ]; then
     echo "swarm_key not found in agent. Adding"
-    ssh-add .keys/swarm_key
+    ssh-add ~/.ssh/swarm_key
   else
     echo "swarm_key appears to already be present. Skipping add"
   fi
@@ -149,13 +143,7 @@ else
     echo "Found existing virtualenv, using that instead."
 fi
 
-# Planned feature to roll out ssh keys
-# Ansible is literally the worst when it comes
-# to authentication management.
-# How are you supposed to SSH to 1000000 hosts
-# change your password
-# then reauthenticate to all of them!
-# run manage_keys
+run manage_keys
 
 . ./.venv/bin/activate
 run pip install --upgrade pip
