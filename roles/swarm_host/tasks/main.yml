@@ -23,3 +23,13 @@
     regexp: '^#PasswordAuthentication yes'
     line: 'PasswordAuthentication no'
   notify: ssh service
+
+# This is a cheap workaround to this
+# https://github.com/docker/swarmkit/issues/2294
+# bug. When the figure it out we should be able to
+# stop doing --no-resolve-image in our service creates
+- name: Create a cron to pull latest docker images
+  cron:
+    name: "Pull the latest mols image"
+    minute: "*/3"
+    job: "docker pull champain/latin_squares:mols_bot"
