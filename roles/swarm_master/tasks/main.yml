@@ -55,7 +55,7 @@
   command: docker container rm watchtower
   when: rswarm_watchtower_container.rc == 0
 
-  - name: Deploy Watchtower
+- name: Deploy Watchtower
   command: >
           docker run \
                   -d \
