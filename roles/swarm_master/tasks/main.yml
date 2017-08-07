@@ -66,4 +66,3 @@
                   --constraint node.role==manager \
                   --mount type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock \
                   {{ mols_bot_image }}
-  when: rswarm_molsbot_service.rc != 0

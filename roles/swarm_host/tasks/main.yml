@@ -31,5 +31,5 @@
 - name: Create a cron to pull latest docker images
   cron:
     name: "Pull the latest mols image"
-    minute: "*/3"
-    job: "docker pull champain/latin_squares:mols_bot"
+    minute: "*/5"
+    job: "docker pull champain/latin_squares:latest"
