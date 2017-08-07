@@ -38,6 +38,8 @@
 
 - name: Pull the latest Watchtower for PI
   command: "docker pull talmai/rpi-watchtower"
+  ignore_errors: True
+  changed_when: False
 
 - name: Check to see if Watchtower is running
   shell: "docker container inspect watchtower | grep Running  | grep true"
@@ -53,7 +55,7 @@
   command: docker container rm watchtower
   when: rswarm_watchtower_container.rc == 0
 
-- name: Deploy Mols Slackbot
+  - name: Deploy Watchtower
   command: >
           docker run \
                   -d \
@@ -80,7 +82,7 @@
 
 - name: Deploy Mols Slackbot
   command: >
-          docker run\
+          docker run \
                   -d \
                   --name {{ mols_bot_name }} \
                   -e SLACK_API_TOKEN={{ rswarm_mols_api_key }} \
