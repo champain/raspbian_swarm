@@ -1,0 +1,6 @@
+---
+connection: local
+mols_bot_name: mols_slack_bot
+mols_bot_image: nykke/mols_bot_raspbian:latest
+rswarm_mols_api_key: "{{ secure_rswarm_mols_api_key }}"
+rswarm_mols_hook_key: "{{ secure_rswarm_mols_hook_key }}"
