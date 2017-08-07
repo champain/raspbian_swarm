@@ -24,12 +24,6 @@
   changed_when: False
   ignore_errors: True
 
-- name: Check to see if the mols slack bot is running
-  command: "docker service ps {{ mols_bot_name }}"
-  register: rswarm_molsbot_service
-  changed_when: False
-  ignore_errors: True
-
 - name: Deploy Docker viz
   command: >
           docker service create \
@@ -42,27 +36,54 @@
                   alexellis2/visualizer-arm:latest
   when: rswarm_viz_service.rc != 0
 
+- name: Pull the latest Watchtower for PI
+  command: "docker pull talmai/rpi-watchtower"
+
+- name: Check to see if Watchtower is running
+  shell: "docker container inspect watchtower | grep Running  | grep true"
+  register: rswarm_watchtower_container
+  changed_when: False
+  ignore_errors: True
+
+- name: Stop Watchtower if it's running
+  command: docker container stop watchtower
+  when: rswarm_watchtower_container.rc == 0
+
+- name: Remove Watchtower
+  command: docker container rm watchtower
+  when: rswarm_watchtower_container.rc == 0
+
+- name: Deploy Mols Slackbot
+  command: >
+          docker run \
+                  -d \
+                  --name watchtower \
+                  -v /var/run/docker.sock:/var/run/docker.sock \
+                  talmai/rpi-watchtower 6
+
 - name: Pull the latest mols slack bot image
   command: "docker pull {{ mols_bot_image }}"
 
 - name: Check to see if the mols slack bot is running
-  command: docker service ps {{ mols_bot_name }}
+  shell: "docker container inspect {{ mols_bot_name }} | grep Running  | grep true"
   register: rswarm_molsbot_service
   changed_when: False
   ignore_errors: True
 
-- name: Remove the mols slack bot if it's running
-  command: "docker service rm {{ mols_bot_name }}"
+- name: Stop the mols slack bot if it's running
+  command: "docker container stop {{ mols_bot_name }}"
+  when: rswarm_molsbot_service.rc == 0
+
+- name: Remove the molsl slack bot
+  command: "docker container rm {{ mols_bot_name }}"
   when: rswarm_molsbot_service.rc == 0
 
 - name: Deploy Mols Slackbot
   command: >
-          docker service create \
-                  --no-resolve-image \
-                  --detach=False \
+          docker run\
+                  -d \
                   --name {{ mols_bot_name }} \
                   -e SLACK_API_TOKEN={{ rswarm_mols_api_key }} \
                   -e MOLS_SLACK_API_KEY={{ rswarm_mols_hook_key }} \
-                  --constraint node.role==manager \
                   --mount type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock \
                   {{ mols_bot_image }}
