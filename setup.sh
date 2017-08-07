@@ -41,7 +41,7 @@ manage_keys() {
       exit 1
     fi
   fi
-  prgrep ssh-agent > /dev/null
+  pgrep ssh-agent > /dev/null
   if [ $? -ne 0 ]; then
     echo "No ssh-agent running. Starting"
     eval `ssh-agent`
