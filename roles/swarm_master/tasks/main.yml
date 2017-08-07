@@ -18,9 +18,15 @@
     swarm_worker_token: "{{ swarm_worker_token.stdout }}"
     swarm_master_ip: "{{ ansible_eth0.ipv4.address }}"
 
-- name: Check to see if the docker viz is running
+- name: Check to see if docker viz is running
   command: docker service ps viz
   register: rswarm_viz_service
+  changed_when: False
+  ignore_errors: True
+
+- name: Check to see if the mols slack bot is running
+  command: "docker service ps {{ mols_bot_name }}"
+  register: rswarm_molsbot_service
   changed_when: False
   ignore_errors: True
 
@@ -35,3 +41,29 @@
                   --mount type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock \
                   alexellis2/visualizer-arm:latest
   when: rswarm_viz_service.rc != 0
+
+- name: Pull the latest mols slack bot image
+  command: "docker pull {{ mols_bot_image }}"
+
+- name: Check to see if the mols slack bot is running
+  command: docker service ps {{ mols_bot_name }}
+  register: rswarm_molsbot_service
+  changed_when: False
+  ignore_errors: True
+
+- name: Remove the mols slack bot if it's running
+  command: "docker service rm {{ mols_bot_name }}"
+  when: rswarm_molsbot_service.rc == 0
+
+- name: Deploy Mols Slackbot
+  command: >
+          docker service create \
+                  --no-resolve-image \
+                  --detach=False \
+                  --name {{ mols_bot_name }} \
+                  -e SLACK_API_TOKEN={{ rswarm_mols_api_key }} \
+                  -e MOLS_SLACK_API_KEY={{ rswarm_mols_hook_key }} \
+                  --constraint node.role==manager \
+                  --mount type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock \
+                  {{ mols_bot_image }}
+  when: rswarm_molsbot_service.rc != 0
