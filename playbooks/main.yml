@@ -10,7 +10,7 @@
 
     - name: Go discover all of the raspberry pis
       shell: >
-        avahi-browse -a -t | awk '/IPv4 raspberrypi-/ { print $4 }'
+        avahi-browse -a -t | awk '/IPv4 raspberrypi-/ { print $4 }' | uniq
       register: avahi_discovered_pis
       changed_when: False
 
