@@ -8,7 +8,7 @@ on what Latin squares are, and why they're interesting, check out
 
 ## Initial Setup
 
-of writing the OS image
+The default [method](https://www.raspberrypi.org/documentation/installation/installing-images/README.md) of writing the OS image
 to the microSD card can be used. The only differences
 are that SSH must be enabled. So the user will need to
 mount the microSD card once it's been written, and touch a
@@ -126,7 +126,7 @@ docker service create \
 ```
 
 
-## Build and push the image
+### Build and push the image for the Crystal script
 First you need to install Crystal on an arm machine like a Pi
 
 ```bash
@@ -142,7 +142,7 @@ cd build
 crystal build mols2.cr
 ```
 
-# Docker service create command
+### Docker service create command
 This docker service launches the latin squares script, and accepts two arguments as parameters
 0 - the order or size of the square the user would like found
 1 - the full URL to the incoming webhook for slack integration.
