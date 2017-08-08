@@ -5,7 +5,7 @@
   tasks:
     - name: set the hostname
       hostname:
-        name: swarmaster.local
+        name: swarmaster
 
     - name: Apt update to install avahi-utils
       apt:
@@ -14,7 +14,7 @@
 
     - name: Go discover all of the raspberry pis
       shell: >
-        avahi-browse -a -t | awk '/IPv4 raspberrypi-/ { print $4 }' | uniq
+        avahi-browse -a -t | awk '/IPv4 raspberrypi/ { print $4 }' | uniq
       register: avahi_discovered_pis
       changed_when: False
 
