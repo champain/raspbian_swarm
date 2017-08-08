@@ -7,6 +7,9 @@
       hostname:
         name: swarmaster
 
+    - name: Restart avahi service
+      command: service avahi-daemon restart
+
     - name: Apt update to install avahi-utils
       apt:
         name: avahi-utils
