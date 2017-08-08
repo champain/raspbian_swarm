@@ -3,6 +3,10 @@
   hosts: swarm_master
   become: True
   tasks:
+    - name: set the hostname
+      hostname:
+        name: swarmaster.local
+
     - name: Apt update to install avahi-utils
       apt:
         name: avahi-utils
