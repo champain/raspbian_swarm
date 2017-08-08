@@ -4,6 +4,14 @@
   register: swarm_active
   changed_when: False
 
+- name: Set the ssh config file 
+  template:
+    src: templates/config.j2
+    dest: /home/pi/.ssh/config
+    owner: pi
+    group: pi
+    mode: 0644
+
 - name: Initialize the swarm
   command: "docker swarm init --advertise-addr {{ ansible_eth0.ipv4.address }}"
   when: '"inactive" in swarm_active.stdout'
